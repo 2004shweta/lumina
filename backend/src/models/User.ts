@@ -2,20 +2,27 @@ import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
+  firebaseUid?: string;
   email: string;
-  password: string;
+  password?: string;
   firstName: string;
   lastName: string;
+  name?: string; // For Firebase display name
   avatar?: string;
   phone?: string;
   dateOfBirth?: Date;
-  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say';
+  gender?: 'male' | 'female' | 'non-binary' | 'prefer-not-to-say';
+  age?: number;
+  category?: 'student' | 'working_professional';
+  profession?: string;
+  domain?: string;
   location?: {
     country: string;
     city: string;
     timezone: string;
   };
   bio?: string;
+  role?: 'user' | 'expert' | 'admin';
   isExpert: boolean;
   isVerified: boolean;
   isActive: boolean;
@@ -42,6 +49,11 @@ export interface IUser extends Document {
 }
 
 const userSchema = new Schema<IUser>({
+  firebaseUid: {
+    type: String,
+    sparse: true, // Allow null/undefined values, but enforce uniqueness when present
+    unique: true
+  },
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -52,20 +64,34 @@ const userSchema = new Schema<IUser>({
   },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: function(this: IUser) {
+      // Password is required only if firebaseUid is not present (traditional signup)
+      return !this.firebaseUid;
+    },
     minlength: [8, 'Password must be at least 8 characters long']
   },
   firstName: {
     type: String,
-    required: [true, 'First name is required'],
+    required: function(this: IUser) {
+      // First name required only if name (from Firebase) is not present
+      return !this.name;
+    },
     trim: true,
     maxlength: [50, 'First name cannot exceed 50 characters']
   },
   lastName: {
     type: String,
-    required: [true, 'Last name is required'],
+    required: function(this: IUser) {
+      // Last name required only if name (from Firebase) is not present
+      return !this.name;
+    },
     trim: true,
     maxlength: [50, 'Last name cannot exceed 50 characters']
+  },
+  name: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Name cannot exceed 100 characters']
   },
   avatar: {
     type: String,
@@ -80,7 +106,27 @@ const userSchema = new Schema<IUser>({
   },
   gender: {
     type: String,
-    enum: ['male', 'female', 'other', 'prefer-not-to-say']
+    enum: ['male', 'female', 'non-binary', 'prefer-not-to-say']
+  },
+  age: {
+    type: Number,
+    min: [16, 'Age must be at least 16'],
+    max: [100, 'Age cannot exceed 100']
+  },
+  category: {
+    type: String,
+    enum: ['student', 'working_professional'],
+    trim: true
+  },
+  profession: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Profession cannot exceed 100 characters']
+  },
+  domain: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Domain cannot exceed 100 characters']
   },
   location: {
     country: {
@@ -99,6 +145,11 @@ const userSchema = new Schema<IUser>({
   bio: {
     type: String,
     maxlength: [500, 'Bio cannot exceed 500 characters']
+  },
+  role: {
+    type: String,
+    enum: ['user', 'expert', 'admin'],
+    default: 'user'
   },
   isExpert: {
     type: Boolean,
@@ -166,8 +217,7 @@ const userSchema = new Schema<IUser>({
   }
 });
 
-// Index for better query performance
-userSchema.index({ email: 1 });
+// Index for better query performance (email index is created automatically by unique: true)
 userSchema.index({ isExpert: 1 });
 userSchema.index({ isVerified: 1 });
 

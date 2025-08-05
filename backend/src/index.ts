@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
@@ -5,7 +8,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import compression from 'compression';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
 import { createServer } from 'http';
 import path from 'path';
 
@@ -31,8 +33,6 @@ import digitalProductRoutes from './routes/digitalProducts';
 import analyticsRoutes from './routes/analytics';
 import calendarRoutes from './routes/calendar';
 import dashboardRoutes from './routes/dashboard';
-
-dotenv.config();
 
 const app = express();
 const server = createServer(app);

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { AppError } from '../middleware/errorHandler';
 import { protect } from '../middleware/auth';
+import { verifyFirebaseToken } from '../middleware/firebaseAuth';
 import User from '../models/User';
 
 const router = express.Router();
@@ -34,7 +35,21 @@ router.post('/register', [
   body('lastName')
     .trim()
     .isLength({ min: 2, max: 50 })
-    .withMessage('Last name must be between 2 and 50 characters')
+    .withMessage('Last name must be between 2 and 50 characters'),
+  body('age')
+    .optional()
+    .isInt({ min: 16, max: 100 })
+    .withMessage('Age must be between 16 and 100'),
+  body('profession')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Profession must be between 2 and 100 characters'),
+  body('domain')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage('Domain must be between 2 and 100 characters')
 ], async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -45,7 +60,20 @@ router.post('/register', [
       });
     }
 
-    const { email, password, firstName, lastName, phone, dateOfBirth, gender } = req.body;
+    const { 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      phone, 
+      dateOfBirth, 
+      gender,
+      age,
+      category,
+      profession,
+      domain,
+      linkedinId
+    } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -56,16 +84,33 @@ router.post('/register', [
       });
     }
 
-    // Create user
-    const user = await User.create({
+    // Prepare user data
+    const userData: any = {
       email,
-      password,
+      password, // Will be hashed by the pre-save middleware
       firstName,
       lastName,
       phone,
       dateOfBirth,
-      gender
-    });
+      gender,
+      isVerified: false,
+      isActive: true,
+      role: 'user'
+    };
+
+    // Add additional profile data if provided
+    if (age) userData.age = parseInt(age);
+    if (category) userData.category = category;
+    if (profession) userData.profession = profession;
+    if (domain) userData.domain = domain;
+    if (linkedinId) {
+      userData.socialLinks = {
+        linkedin: linkedinId
+      };
+    }
+
+    // Create user - password will be automatically hashed by pre-save middleware
+    const user = await User.create(userData);
 
     // Generate token
     const token = generateToken(user._id.toString());
@@ -79,8 +124,12 @@ router.post('/register', [
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          profession: user.profession,
+          domain: user.domain,
+          category: user.category,
           isExpert: user.isExpert,
-          isVerified: user.isVerified
+          isVerified: user.isVerified,
+          role: user.role
         },
         token
       }
@@ -159,6 +208,28 @@ router.post('/login', [
           isVerified: user.isVerified
         },
         token
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// @route   POST /api/auth/verify
+// @desc    Verify Firebase token and sync user
+// @access  Public
+router.post('/verify', verifyFirebaseToken, async (req, res, next) => {
+  try {
+    res.json({
+      success: true,
+      data: { 
+        user: {
+          id: req.user._id,
+          email: req.user.email,
+          name: req.user.name || `${req.user.firstName} ${req.user.lastName}`,
+          avatar: req.user.avatar,
+          role: req.user.role || 'user'
+        }
       }
     });
   } catch (error) {

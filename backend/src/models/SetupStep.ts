@@ -52,7 +52,7 @@ const setupStepSchema = new Schema<ISetupStep>({
   timestamps: true
 });
 
-// Index for efficient queries
-setupStepSchema.index({ userId: 1, order: 1 });
+// Index for efficient queries (userId index is created automatically by index: true)
+setupStepSchema.index({ order: 1 });
 
 export const SetupStep = mongoose.model<ISetupStep>('SetupStep', setupStepSchema); 
