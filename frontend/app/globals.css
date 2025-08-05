@@ -1,27 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --accent: #ff0000;
-  --accent-hover: #cc0000;
-  --surface: #111111;
-  --surface-light: #1a1a1a;
-  --text-muted: #a0a0a0;
-  --border: #333333;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-surface: var(--surface);
-  --color-surface-light: var(--surface-light);
-  --color-text-muted: var(--text-muted);
-  --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background: #ffffff;
+  --foreground: #111827;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --surface: #f9fafb;
+  --surface-light: #ffffff;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
 }
 
 body {
@@ -31,7 +18,32 @@ body {
   line-height: 1.6;
 }
 
-/* Custom scrollbar */
+/* Remove any red outlines or focus rings that might appear */
+* {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove any default browser focus styles - GLOBAL OVERRIDE */
+*:focus,
+*:focus-visible,
+*:focus-within,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+a:focus,
+div:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+}
+
+/* Custom scrollbar with blue theme */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -49,15 +61,47 @@ body {
   background: var(--accent-hover);
 }
 
+/* Remove any red debugging styles */
+.debug,
+.debug * {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Ensure no red elements appear on click */
+*::selection {
+  background-color: #2563eb;
+  color: white;
+}
+
+*::-moz-selection {
+  background-color: #2563eb;
+  color: white;
+}
+
 /* Smooth transitions */
 * {
   transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Custom focus styles */
+/* Completely remove focus styles */
 *:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Override all Tailwind focus classes */
+.focus\:ring-2:focus,
+.focus\:ring-blue-500:focus,
+.focus\:ring-blue-600:focus,
+.focus\:outline-none:focus,
+.focus\:border-transparent:focus,
+.focus\:border-blue-500:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: inherit !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-color: transparent !important;
 }
 
 /* Button hover effects */

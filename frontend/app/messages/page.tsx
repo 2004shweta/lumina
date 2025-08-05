@@ -147,7 +147,7 @@ export default function Messages() {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000', {
+    const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003', {
       auth: { token }
     });
 
@@ -212,7 +212,7 @@ export default function Messages() {
   const fetchConversations = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages/conversations`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003'}/api/messages/conversations`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -230,7 +230,7 @@ export default function Messages() {
   const fetchMessages = useCallback(async (conversationId: string) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages/conversations/${conversationId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003'}/api/messages/conversations/${conversationId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -298,7 +298,7 @@ export default function Messages() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003'}/api/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -317,7 +317,7 @@ export default function Messages() {
   const handleReaction = async (messageId: string, reaction: string) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages/${messageId}/reactions`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003'}/api/messages/${messageId}/reactions`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -333,7 +333,7 @@ export default function Messages() {
   const handleDeleteMessage = async (messageId: string) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/messages/${messageId}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5003'}/api/messages/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

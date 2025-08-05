@@ -299,8 +299,7 @@ const expertSchema = new Schema<IExpert>({
   timestamps: true
 });
 
-// Indexes for better query performance
-expertSchema.index({ userId: 1 });
+// Indexes for better query performance (userId index is created automatically by unique: true)
 expertSchema.index({ expertise: 1 });
 expertSchema.index({ rating: -1 });
 expertSchema.index({ isFeatured: 1 });
