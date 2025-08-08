@@ -86,38 +86,6 @@ yarn dev
 
 ---
 
-## 📁 Folder Structure (example)
-
-```
-lumina/
-├── components/
-├── pages/
-│   ├── index.tsx
-│   ├── dashboard.tsx
-│   └── mentor/
-├── lib/
-│   └── firebase.ts
-├── styles/
-├── utils/
-├── public/
-└── .env.local
-```
-
----
-
-## 📌 Roadmap
-
-* [x] Firebase Auth Integration
-* [x] Razorpay/Stripe direct payouts
-* [x] Mentor profile management
-* [x] Booking and scheduling system
-* [x] Video call integration
-* [ ] AI-based mentor recommendations
-* [ ] Multi-language support
-* [ ] Mobile App (React Native or Flutter)
-
----
-
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!
